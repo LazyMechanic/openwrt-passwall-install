@@ -129,26 +129,43 @@ parse_args() {
 #     echo "User answered no"
 #   fi
 yes_no() {
-  question="$1"
-  default="${2:-}" # Optional default: Y/N (empty = no default)
+  question="${1}"
+  default="${2}"
+  prompt=""
+  answer=""
 
   while true; do
+    # Build prompt
     if [ -n "${default}" ]; then
-      printf "%s [%s/%s]: " "${question}" "${default%?}" "${default#?}"
+      if [ "${default}" = "Y" ] || [ "${default}" = "y" ]; then
+        prompt="${question} [Y/n]: "
+      else
+        prompt="${question} [y/N]: "
+      fi
     else
-      printf "%s [y/n]: " "${question}"
+      prompt="${question} [y/n]: "
     fi
-    read answer || return 1 # Ctrl+D or read failure counts as no
 
-    # If empty and default provided
+    # Prompt user
+    printf "%s" "${prompt}"
+    read answer || return 1  # Ctrl+D counts as no
+
+    # Use default if input is empty
     if [ -z "${answer}" ] && [ -n "${default}" ]; then
       answer="${default}"
     fi
 
+    # Check answer
     case "${answer}" in
-    [Yy] | [Yy][Ee][Ss]) return 0 ;;
-    [Nn] | [Nn][Oo]) return 1 ;;
-    *) printf "Please answer yes or no.\n" ;;
+      y|Y|yes|YES|Yes)
+        return 0
+        ;;
+      n|N|no|NO|No)
+        return 1
+        ;;
+      *)
+        echo "Please answer yes or no."
+        ;;
     esac
   done
 }
