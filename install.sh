@@ -432,7 +432,7 @@ check_installed() {
     exit 1
   fi
 
-  log_info "All packages installed. It is recommended to reboot the device"
+  log_info "All packages installed"
 }
 
 main() {
@@ -447,6 +447,10 @@ main() {
   install_passwall_feeds
   install_passwall_pkgs
   check_installed
+
+  if yes_no "Do you want to reboot device?" Y; then
+    reboot
+  fi
 }
 
 main "$@"
