@@ -54,14 +54,14 @@ log_debug() {
 #===============================================================================
 cleanup_tmp_dir() {
   if [ -n "${TMP_DIR}" ] && [ -d "${TMP_DIR}" ]; then
-    log_debug "Removing temp directory: ${TMP_DIR}"
+    log_debug "Removing temp directory '${TMP_DIR}'"
     rm -rf "${TMP_DIR}"
   fi
 }
 
 cleanup_feeds() {
   if [ -f "${FEED_FILE}.bak" ]; then
-    log_info "Restoring original feed file from backup"
+    log_info "Restoring original feed file from backup '${FEED_FILE}.bak' -> '${FEED_FILE}'"
     mv -f "${FEED_FILE}.bak" "${FEED_FILE}"
   fi
 }
@@ -233,6 +233,7 @@ install_passwall_feeds() {
 
   # Backup existing feed file
   if [ -f "${FEED_FILE}" ]; then
+    log_info "Backing up old feed file '${FEED_FILE}' -> '${FEED_FILE}.bak'"
     cp "${FEED_FILE}" "${FEED_FILE}.bak"
   fi
 
@@ -272,7 +273,7 @@ install_passwall_feeds() {
 
 install_passwall_pkgs() {
   opkg update
-  
+
   packages="dnsmasq-full wget-ssl unzip luci-app-passwall2 kmod-nft-socket kmod-nft-tproxy ca-bundle kmod-inet-diag kernel kmod-netlink-diag kmod-tun ipset xray-core"
 
   to_install=""
