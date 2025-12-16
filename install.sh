@@ -449,6 +449,7 @@ main() {
   check_installed
 
   if yes_no "Do you want to reboot device?" Y; then
+    log_info "Rebooting..."
     reboot
   fi
 }
