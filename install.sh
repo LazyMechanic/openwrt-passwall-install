@@ -411,6 +411,8 @@ check_installed() {
     log_error "Package xray-core not installed!"
     exit 1
   fi
+
+  log_info "All packages installed. It is recommended to reboot the device"
 }
 
 main() {
