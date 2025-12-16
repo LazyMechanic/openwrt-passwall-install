@@ -271,6 +271,8 @@ install_passwall_feeds() {
 }
 
 install_passwall_pkgs() {
+  opkg update
+  
   packages="dnsmasq-full wget-ssl unzip luci-app-passwall2 kmod-nft-socket kmod-nft-tproxy ca-bundle kmod-inet-diag kernel kmod-netlink-diag kmod-tun ipset xray-core"
 
   to_install=""
@@ -295,9 +297,9 @@ install_passwall_pkgs() {
     pkg_version=$(echo "${pkg_info}" | awk '{print $1}')
     pkg_size=$(echo "${pkg_info}" | awk '{print $2}')
 
-    log_debug "${pkg} version: ${pkg_version}"
-    log_debug "${pkg} size: ${pkg_size}"
-    log_debug "${pkg} installed version: ${installed_pkg_version}"
+    log_debug "   ${pkg} version: ${pkg_version}"
+    log_debug "   ${pkg} size: ${pkg_size}"
+    log_debug "   ${pkg} installed version: ${installed_pkg_version}"
 
     # Check if package exists in repo
     if [ "${pkg_version}" = "NOTFOUND" ]; then
