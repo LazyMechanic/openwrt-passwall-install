@@ -807,16 +807,30 @@ install_passwall_feeds() {
 
 bytes_to_human() {
     bytes="${1}"
-    if [ "${bytes}" -lt 1024 ]; then
-        printf '%d B' "$bytes"
-    elif [ "${bytes}" -lt 1048576 ]; then
-        printf '%d KB' "$((bytes / 1024))"
-    elif [ "${bytes}" -lt 1073741824 ]; then
-        printf '%d MB' "$((bytes / 1048576))"
-    elif [ "${bytes}" -lt 1099511627776 ]; then
-        printf '%d GB' "$((bytes / 1073741824))"
+    div=1
+    unit="B"
+
+    if [ "${bytes}" -ge 1099511627776 ]; then
+        div=1099511627776
+        unit="TB"
+    elif [ "${bytes}" -ge 1073741824 ]; then
+        div=1073741824
+        unit="GB"
+    elif [ "${bytes}" -ge 1048576 ]; then
+        div=1048576
+        unit="MB"
+    elif [ "${bytes}" -ge 1024 ]; then
+        div=1024
+        unit="KB"
+    fi
+
+    if [ "${div}" -eq 1 ]; then
+        printf '%d %s' "$bytes" "$unit"
     else
-        printf '%d TB' "$((bytes / 1099511627776))"
+        whole=$((bytes / div))
+        remainder=$((bytes % div))
+        decimal=$(((remainder * 10) / div))
+        printf '%d.%d %s' "${whole}" "${decimal}" "${unit}"
     fi
 }
 
