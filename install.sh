@@ -805,6 +805,21 @@ install_passwall_feeds() {
     log_info "Passwall feeds installed!"
 }
 
+bytes_to_human() {
+    bytes="${1}"
+    if [ "${bytes}" -lt 1024 ]; then
+        printf '%d B' "$bytes"
+    elif [ "${bytes}" -lt 1048576 ]; then
+        printf '%d KB' "$((bytes / 1024))"
+    elif [ "${bytes}" -lt 1073741824 ]; then
+        printf '%d MB' "$((bytes / 1048576))"
+    elif [ "${bytes}" -lt 1099511627776 ]; then
+        printf '%d GB' "$((bytes / 1073741824))"
+    else
+        printf '%d TB' "$((bytes / 1099511627776))"
+    fi
+}
+
 print_pkg_info() {
     pkg="${1}"
     action="${2}"
@@ -828,14 +843,15 @@ print_pkg_info() {
             ;;
     esac
     
-    log_info "   ${pkg} version: ${version}"
-    log_info "   ${pkg} installed version: ${installed_version:--}"
-    log_info "   ${pkg} size: ${size}"
+    log_info "   Version: ${version}"
+    log_info "   Installed version: ${installed_version:--}"
+    log_info "   Size: $(bytes_to_human "${size}") (${size} bytes)"
 }
 
 install_passwall_pkgs() {
     if ! prompt_yes_no 'Install passwall packages?' Y; then return; fi
 
+    log_info "Update packages"
     opkg update
 
     packages="dnsmasq-full wget-ssl unzip luci-app-passwall2 kmod-nft-socket kmod-nft-tproxy ca-bundle kmod-inet-diag kernel kmod-netlink-diag kmod-tun ipset xray-core"
@@ -861,10 +877,6 @@ install_passwall_pkgs() {
         ')
         pkg_version=$(echo "${pkg_info}" | awk '{print $1}')
         pkg_size=$(echo "${pkg_info}" | awk '{print $2}')
-
-        log_debug "   ${pkg} version: ${pkg_version}"
-        log_debug "   ${pkg} size: ${pkg_size}"
-        log_debug "   ${pkg} installed version: ${installed_pkg_version}"
 
         # Check if package exists in repo
         if [ "${pkg_version}" = "NOTFOUND" ]; then
@@ -907,9 +919,9 @@ install_passwall_pkgs() {
     available_bytes=$((available_blocks * 1024))
     total_required=$((total_size_needed + BUFFER))
 
-    log_info "Download size: $total_size_needed bytes"
-    log_info "Est. required: $total_required bytes"
-    log_info "Free space:    $available_bytes bytes"
+    log_info "Download size: $(bytes_to_human "${total_size_needed}") (${total_size_needed} bytes)"
+    log_info "Est. required: $(bytes_to_human "${total_required}") (${total_required} bytes)"
+    log_info "Free space:    $(bytes_to_human "${available_bytes}") (${available_bytes} bytes)"
 
     if [ "${total_required}" -gt "${available_bytes}" ]; then
         log_error "Insufficient space. Missing approx $((total_required - available_bytes)) bytes."
