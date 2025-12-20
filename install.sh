@@ -720,6 +720,7 @@ check_dependencies() {
 }
 
 check_snapshot() {
+    log_info "Checking the distributive version"
     /sbin/reload_config
 
     snapshot=$(grep -o SNAPSHOT /etc/openwrt_release | sed -n '1p')
@@ -728,6 +729,8 @@ check_snapshot() {
         log_error "SNAPSHOT version not supported"
         exit 1
     fi
+
+    log_info "Distributive version is not SNAPSHOT, ok!"
 }
 
 create_temp_workspace() {
