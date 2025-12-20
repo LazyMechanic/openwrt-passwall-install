@@ -758,7 +758,11 @@ install_passwall_feeds() {
     feeds=""
     for feed in passwall_luci passwall_packages passwall2; do
         url="${repo}/releases/packages-${release}/${arch}/${feed}"
-        feeds="${feeds}\n${feed} ${url}"
+        if [ -z "${feeds}" ]; then 
+            feeds="${feed} ${url}"
+        else 
+            feeds="${feeds}\n${feed} ${url}"
+        fi
     done
     
     # Print
