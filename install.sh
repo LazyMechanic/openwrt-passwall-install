@@ -769,7 +769,7 @@ install_passwall_feeds() {
     log_info "Distributive release:      ${release}"
     log_info "Distributive architecture: ${arch}"
     log_info "Passwall feed public key:  ${pub_key}"
-    echo "${feeds}" | while read -r feed url; do
+    printf '%b\n' "${feeds}" | while read -r feed url; do
         log_info "Feed ${feed} -> ${url}"
     done
 
@@ -792,7 +792,7 @@ install_passwall_feeds() {
     fi
 
     log_debug "Installing passwall feeds"
-    echo "${feeds}" | while read -r feed url; do
+    printf '%b\n' "${feeds}" | while read -r feed url; do
         # Check if rtl already exists
         if grep -qF "${url}" "${FEED_FILE}"; then
             log_warn "Feed '${feed}' already exists in ${FEED_FILE}"
